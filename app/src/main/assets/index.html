@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aplikasi Istikharah</title>
+<style>
+:root{
+  --green:#1f5a4b;
+  --green-2:#2f7a63;
+  --green-3:#123f34;
+  --green-soft:#eaf5ef;
+  --yellow:#d0aa3c;
+  --yellow-2:#f4e7b0;
+  --white:#ffffff;
+  --white-soft:#fbfcf8;
+  --card:#fffef9;
+  --line:#dce7de;
+  --text:#1f3a32;
+  --muted:#6d7b73;
+  --shadow:0 22px 48px rgba(18,63,52,.14);
+  --radius-xl:28px;
+  --radius-lg:20px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  min-height:100vh;
+  font-family:"Inter","Segoe UI",Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 16% 16%,rgba(255,255,255,.75),transparent 18%),
+    radial-gradient(circle at 85% 14%,rgba(208,170,60,.18),transparent 28%),
+    linear-gradient(140deg,#dfeee3 0%,#f6f0ca 38%,#ffffff 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:30px 14px;
+  overflow-x:hidden;
+}
+.page-bg-pattern{
+  position:fixed;inset:0;pointer-events:none;opacity:.32;
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.72) 0 10%,transparent 10.2% 100%),
+    radial-gradient(circle at 78% 82%,rgba(31,90,75,.10),transparent 32%);
+}
+.phone-shell{
+  width:min(390px,100%);
+  background:#fff;
+  border-radius:38px;
+  padding:10px;
+  box-shadow:0 30px 80px rgba(18,63,52,.18);
+}
+.app{
+  height:min(830px,calc(100vh - 60px));
+  min-height:700px;
+  position:relative;
+  overflow:hidden;
+  border-radius:31px;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fbf8 42%,#eef7ef 100%);
+  padding:18px 18px calc(18px + var(--safe-bottom));
+}
+.app:before{
+  content:"";
+  position:absolute;
+  top:0;left:50%;
+  width:118px;height:26px;
+  transform:translateX(-50%);
+  background:#fff;
+  border-radius:0 0 18px 18px;
+  z-index:5;
+  box-shadow:0 4px 18px rgba(18,63,52,.05);
+}
+.app:after{
+  content:"";
+  position:absolute;
+  inset:auto -40px -95px auto;
+  width:210px;height:210px;
+  border-radius:50%;
+  background:rgba(208,170,60,.10);
+  pointer-events:none;
+}
+.screen{position:relative;z-index:2;height:100%;min-height:0;display:none;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+.topbar{
+  height:38px;
+  display:grid;
+  grid-template-columns:38px 1fr 38px;
+  align-items:center;
+  margin:6px 0 8px;
+}
+.icon-btn{
+  width:34px;height:34px;border:0;border-radius:14px;
+  background:rgba(255,255,255,.82);
+  color:var(--green);
+  display:grid;place-items:center;
+  box-shadow:0 8px 20px rgba(18,63,52,.08);
+  font-size:18px;text-decoration:none;cursor:pointer;
+  line-height:1;
+}
+.brand-mark{
+  justify-self:center;
+  width:44px;height:44px;border-radius:16px;
+  display:grid;place-items:center;color:#fff;
+  background:linear-gradient(145deg,var(--green-2),var(--green-3));
+  box-shadow:0 13px 28px rgba(18,63,52,.20);
+  font-size:22px;
+}
+header{text-align:center;padding:2px 4px 16px;flex:0 0 auto}
+h1{
+  font-family:"Inter","Segoe UI",Arial,sans-serif;
+  font-size:clamp(2rem,8vw,2.7rem);
+  line-height:.98;
+  color:var(--green-3);
+  letter-spacing:-1.8px;
+  margin-top:10px;
+  font-weight:900;
+}
+.subtitle{
+  max-width:270px;
+  margin:12px auto 0;
+  color:var(--muted);
+  font-size:.9rem;
+  line-height:1.45;
+}
+.programmer{margin-top:7px;font-size:.74rem;color:#8b8a60;font-weight:700;letter-spacing:.2px}
+.chip{
+  width:fit-content;
+  max-width:100%;
+  margin:16px auto 0;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:8px 14px;border-radius:999px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--green);
+  font-size:.78rem;
+  font-weight:800;
+  box-shadow:0 8px 18px rgba(18,63,52,.07);
+  text-align:center;
+}
+.card{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.82);
+  border-radius:var(--radius-xl);
+  box-shadow:0 14px 32px rgba(18,63,52,.08);
+  backdrop-filter:blur(10px);
+}
+#menuScreen .topbar .icon-btn{background:transparent;box-shadow:none}
+#menuScreen .topbar .icon-btn:first-child{justify-self:start}
+#menuScreen .topbar .icon-btn:last-child{justify-self:end}
+#menuScreen .menu-intro{display:none}
+#menuScreen header{padding-top:10px;padding-bottom:18px}
+#menuScreen .chip{display:none}
+.menu-list{
+  flex:1 1 auto;min-height:0;
+  overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  padding:4px 2px 20px;
+  display:grid;gap:9px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(31,90,75,.24) transparent;
+}
+.menu-item{
+  width:100%;border:0;border-radius:20px;
+  min-height:54px;
+  padding:9px 12px;
+  display:grid;
+  grid-template-columns:34px 1fr 24px;
+  gap:10px;align-items:center;
+  background:rgba(255,255,255,.90);
+  color:var(--text);
+  box-shadow:0 12px 25px rgba(18,63,52,.075);
+  cursor:pointer;text-align:left;
+  transition:transform .16s ease,background .16s ease,box-shadow .16s ease;
+}
+.menu-item:hover{transform:translateY(-2px);background:#fff;box-shadow:0 14px 29px rgba(18,63,52,.12)}
+.menu-no{
+  width:30px;height:30px;border-radius:11px;
+  display:grid;place-items:center;
+  background:var(--yellow-2);
+  color:var(--green-3);
+  font-size:.72rem;
+  font-weight:900;
+  letter-spacing:-.2px;
+  line-height:1;
+}
+.menu-title{
+  display:block;
+  min-width:0;
+  color:var(--text);
+  font-size:.86rem;
+  line-height:1.18;
+  font-weight:800;
+  letter-spacing:-.1px;
+  overflow-wrap:anywhere;
+}
+.menu-arrow{
+  justify-self:end;
+  width:24px;height:24px;border-radius:50%;
+  display:grid;place-items:center;
+  background:var(--green);
+  color:#fff;
+  font-weight:900;font-size:1.05rem;
+  box-shadow:0 8px 16px rgba(18,63,52,.16);
+}
+#detailScreen h1{font-size:clamp(1.15rem,4.7vw,1.55rem);letter-spacing:-.5px;margin-top:2px;line-height:1.1}
+#detailScreen header{padding-bottom:12px}
+#detailScreen .subtitle{margin-top:7px;font-size:.82rem;max-width:300px}
+#detailScreen .chip{margin-top:10px;padding:8px 13px;font-size:.76rem;line-height:1.25;background:#fff}
+.random-card{padding:12px;flex:0 0 auto;border-radius:25px;background:rgba(255,255,255,.84)}
+.number-stage{
+  position:relative;min-height:108px;display:grid;place-items:center;overflow:hidden;border-radius:24px;
+  background:linear-gradient(180deg,#ffffff,#eef7f0);
+}
+.number-stage:before,.number-stage:after{content:"";position:absolute;left:50%;transform:translateX(-50%);border-left:8px solid transparent;border-right:8px solid transparent;z-index:3}
+.number-stage:before{top:7px;border-bottom:10px solid var(--yellow)}
+.number-stage:after{bottom:7px;border-top:10px solid var(--yellow)}
+.number-grid{width:100%;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;align-items:center}
+.num-col{display:grid;gap:8px;text-align:center;font-family:Georgia,"Times New Roman",serif;font-size:clamp(.95rem,4vw,1.16rem);color:rgba(29,58,49,.30);transition:transform .14s ease}
+.num-col span:nth-child(2){color:rgba(29,58,49,.72)}
+.selected-window{
+  position:absolute;width:min(76px,20vw);height:90px;top:50%;left:50%;transform:translate(-50%,-50%);
+  border-radius:28px;background:#fff;border:2px solid rgba(208,170,60,.45);
+  display:grid;place-items:center;box-shadow:0 10px 24px rgba(18,63,52,.12);z-index:2;pointer-events:none;
+}
+.selected-number{font-family:Georgia,"Times New Roman",serif;font-size:clamp(2.1rem,9vw,2.65rem);font-weight:800;color:var(--green-3);line-height:1}
+.random-caption{margin:9px 0 10px;display:flex;justify-content:center;align-items:center;gap:8px;color:var(--green);font-size:.82rem;font-weight:700}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.secondary-actions{margin-top:10px}
+button{border:0;cursor:pointer;border-radius:18px;padding:10px;min-height:46px;color:#fff;font-weight:900;font-size:.84rem;letter-spacing:.2px;box-shadow:0 12px 24px rgba(18,63,52,.16);transition:transform .18s ease,filter .18s ease}
+button:hover{transform:translateY(-2px);filter:brightness(1.03)}button:active{transform:scale(.98)}
+.btn-start,.btn-repeat{background:linear-gradient(145deg,var(--green-2),var(--green-3))}
+.btn-stop,.btn-menu{background:linear-gradient(145deg,#ead26f,#c8a33b);color:var(--green-3)}
+.btn-icon{width:22px;height:22px;margin-right:5px;display:inline-grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.95);vertical-align:middle;color:var(--green-3)}
+.result-card{margin-top:10px;padding:12px;overflow:hidden;position:relative;flex:1 1 auto;min-height:0;border-radius:25px;background:rgba(255,255,255,.84)}
+.result-card:after{content:"";position:absolute;top:-58px;right:-58px;width:145px;height:145px;border-radius:50%;background:rgba(208,170,60,.14)}
+.result-head{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--line);position:relative;z-index:2}
+.result-badge{width:40px;height:40px;border-radius:15px;display:grid;place-items:center;color:#fff;background:linear-gradient(145deg,var(--green-2),var(--green-3));font-size:20px;box-shadow:0 10px 22px rgba(18,63,52,.18)}
+.result-head h2{font-family:"Inter","Segoe UI",Arial,sans-serif;color:var(--green);font-size:1.05rem;font-weight:900;letter-spacing:-.3px}
+.selected-line{margin-top:2px;color:var(--muted);font-size:.76rem}.selected-line strong{color:var(--green-3);font-size:.96rem}
+.answer-box{position:relative;z-index:2;margin-top:10px;border-radius:18px;background:#fff;padding:13px;display:grid;grid-template-columns:1fr;gap:0;align-items:center;min-height:105px}
+.answer-text{font-family:Georgia,"Times New Roman",serif;color:var(--text);font-size:clamp(.95rem,4vw,1.08rem);font-weight:700;line-height:1.35;text-align:center}
+.arabic-note{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);color:var(--green);font-family:"Times New Roman",Georgia,serif;font-size:clamp(1.05rem,4.5vw,1.3rem);font-weight:700;line-height:1.4;text-align:center;direction:rtl}
+.is-spinning .num-col:nth-child(1){animation:spinA .35s linear infinite}.is-spinning .num-col:nth-child(2){animation:spinB .31s linear infinite}.is-spinning .num-col:nth-child(3){animation:spinC .26s linear infinite}.is-spinning .num-col:nth-child(4){animation:spinB .29s linear infinite}.is-spinning .num-col:nth-child(5){animation:spinA .33s linear infinite}
+@keyframes spinA{0%{transform:translateY(-20px)}50%{transform:translateY(18px)}100%{transform:translateY(-20px)}}@keyframes spinB{0%{transform:translateY(16px)}50%{transform:translateY(-18px)}100%{transform:translateY(16px)}}@keyframes spinC{0%{transform:scale(.98) translateY(-10px)}50%{transform:scale(1.02) translateY(10px)}100%{transform:scale(.98) translateY(-10px)}}
+@media(max-width:460px){
+  body{padding:0;align-items:stretch;background:linear-gradient(180deg,#e1efe2 0%,#ffffff 58%,#f6f0ca 100%)}
+  .page-bg-pattern{display:none}
+  .phone-shell{width:100%;min-height:100vh;border-radius:0;padding:0;box-shadow:none;background:transparent}
+  .app{height:100vh;min-height:100vh;max-height:none;border-radius:0;padding:18px 16px calc(18px + var(--safe-bottom))}
+  .app:before{width:108px;height:24px}
+  .screen{min-height:0}
+  #menuScreen header{padding-top:6px;padding-bottom:14px}
+  h1{font-size:2.18rem;letter-spacing:-1.9px}
+  .subtitle{font-size:.86rem;margin-top:10px}
+  .menu-list{gap:8px;padding-bottom:26px}
+  .menu-item{min-height:51px;border-radius:18px;padding:8px 10px;grid-template-columns:31px 1fr 22px;gap:9px}
+  .menu-no{width:28px;height:28px;border-radius:10px;font-size:.68rem}
+  .menu-title{font-size:.80rem;line-height:1.16}
+  .menu-arrow{width:22px;height:22px;font-size:.98rem}
+  .actions{gap:9px}
+  button{padding:10px 8px;font-size:.82rem}
+}
+@media(max-width:350px){
+  .app{padding-left:12px;padding-right:12px}
+  h1{font-size:1.92rem}
+  .menu-title{font-size:.76rem}
+  .actions{grid-template-columns:1fr}
+  .result-head,.answer-box{grid-template-columns:1fr;text-align:center;justify-items:center}
+}
+</style>
+</head>
+<body>
+<div class="page-bg-pattern"></div>
+<main class="phone-shell" aria-label="Istikharah Ruhani">
+  <section class="app">
+    <section class="screen active" id="menuScreen">
+      <div class="topbar"><div class="icon-btn" aria-hidden="true">☰</div><div class="brand-mark" aria-hidden="true">☪</div><div class="icon-btn" aria-hidden="true">✦</div></div>
+      <header><h1>Istikharah Ruhani</h1><p class="subtitle">Pilih kategori perkara hajat yang ingin digunakan.</p><p class="programmer">Programed by Ali Syehan</p><div class="chip">✺ <span>Kategori</span> • <span>Perkara Hajat</span></div></header>
+      <section class="card menu-intro"><div class="menu-intro-icon">☾</div><div><h2>Perkara Hajat</h2><p>Pilih salah satu judul.</p></div></section>
+      <div class="menu-list" id="menuList"></div>
+    </section>
+    <section class="screen" id="detailScreen">
+      <div class="topbar"><button class="icon-btn" type="button" id="backTopBtn" aria-label="Kembali ke menu">‹</button><div class="brand-mark" aria-hidden="true">☪</div><button class="icon-btn" type="button" id="topMenuBtn" aria-label="Kembali ke menu utama">⌂</button></div>
+      <header><h1 id="pageTitle">Terpenuhinya Hajat</h1><p class="subtitle" id="pageSubtitle">Tercapai atau tidaknya hajat.</p><div class="chip">Baca Basmalah &amp; Shalawat 12 kali</div></header>
+      <section class="card random-card" id="randomCard">
+        <div class="number-stage" aria-live="polite"><div class="selected-window"><div class="selected-number" id="selectedNumber">--</div></div><div class="number-grid" id="numberGrid"></div></div>
+        <p class="random-caption">✦ <span id="statusText">Nomor siap diacak</span></p>
+        <div class="actions"><button class="btn-start" type="button" id="startBtn"><span class="btn-icon">▶</span>START</button><button class="btn-stop" type="button" id="stopBtn"><span class="btn-icon">■</span>STOP</button></div>
+        <div class="actions secondary-actions"><button class="btn-repeat" type="button" id="repeatBtn"><span class="btn-icon">↻</span>ULANG</button><button class="btn-menu" type="button" id="menuBtn"><span class="btn-icon">⌂</span>MENU</button></div>
+      </section>
+      <section class="card result-card" aria-live="polite"><div class="result-head"><div class="result-badge" aria-hidden="true">✓</div><div><h2>Hasil Pilihan</h2><p class="selected-line">Nomor terpilih: <strong id="resultNumber">--</strong></p></div></div><div class="answer-box"><p class="answer-text" id="answerText"></p><p class="arabic-note">والله أعلمُ بالـصَّوابِ</p></div></section>
+    </section>
+  </section>
+</main>
+<script>
+const DATA = [
+  {
+    "title": "Terpenuhinya Hajat",
+    "subtitle": "Tercapai atau tidaknya hajat.",
+    "group": "Masyriq",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Fokus terhadap hajat ini, maka akan tercapai di waktu yang cepat.",
+      "Sangat sulit bagimu atas tercapainya hajat ini.",
+      "Terjadi penundaan pencapaian hajat, namun kelak akan tercapai.",
+      "Hajat akan tercapai dengan cepat.",
+      "Terjadi penundaan pencapaian hajat, namun setelah satu masa (period), akan tercapai hajatnya.",
+      "Hajatnya akan tercapai di waktu yang cepat.",
+      "Sangat sulit tercapai. Namun dengan tekad yang kuat, hajat ini akan tercapai.",
+      "Hajatnya akan tercapai untukmu diwaktu ini.",
+      "Hajatnya akan tercapai di waktu yang cepat.",
+      "Tercapainya hajat ini sangat sulit untukmu.",
+      "Urusan hajat ini sangat sulit. Maka mohonlah kepada Allah untuk kemudahannnya.",
+      "Hajatnya akan tercapai di waktu yang cepat.",
+      "Sangat sulit tercapai. Namun dengan tekadmu yang kuat, hajat ini akan tercapai."
+    ]
+  },
+  {
+    "title": "Perdagangan",
+    "subtitle": "Laba atau tidak dagangannya.",
+    "group": "Masyriq",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Tinggalkan perdagangan di waktu ini, tidak ada keuntungan untukmu didalamnya.",
+      "Kamu akan mendapatkan keuntungan didalam perdagangan ini.",
+      "Tidak ada kebaikan untukmu didalamnya pada waktu ini. Bersabarlah, sungguh Allah bersama orang-orang yang sabar.",
+      "Lakukan perdagangan ini. Sesuatunya terdapat kemaslahatan untukmu didalamnya.",
+      "Hasil perdagangannya baik.",
+      "Beralih ke perdagangan ini. Karena didalamnya terdapat keuntungan yang besar. Namun stelah susah payah.",
+      "Kebaikan didalamnya sangat jauh darimu. Tinggalkanlah pada kesempatan ini.",
+      "Kamu akan mendapatkan keuntungan dan petunjuk kebaikan didalamnya.",
+      "Bersabarlah darinya pada kesempatan ini. Keuntungan untukmu sangat sulit didalamnya.",
+      "Lakukanlah dan mantapkanlah, maka kamu akan mendapat kebaikan didalamnya.",
+      "Berhati-hatilah. Tidak terlihat apapun kecuali kerugian dan penyesalan.",
+      "Terdapat kebaikan didalamnya untukmu di kesempatan ini. Bersegeralah untuk melakukan perdagangan.",
+      "Kamu akan mendapatkan kebaikan didalamnya, bersegeralah."
+    ]
+  },
+  {
+    "title": "Penjualan",
+    "subtitle": "Baik atau tidak penjualan produk.",
+    "group": "Masyriq",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Urungkanlah. Tidak ada kebaikan untukkmu didalamnya.",
+      "Tidak ada kebaikan untukmu selain keburukan dan kerusakan. Tinggalkanlah.",
+      "Jualah, maka kamu akan mendapatkan keuntungan dan keberkahan.",
+      "Jangan menjualnya. Tidak terlihat apapun kecuali kerugian dan penyesalan.",
+      "Bersegeralah, maka kamu akan memperoleh kesenangan dan keuntungan.",
+      "Tahanlah. Tidak terlihat apapun kecuali kerugian dan penyesalan.",
+      "Tawakallah kepada Allah, lalu juallah. Kamu akan mendapatkan keuntungan didalamnya.",
+      "Tawakallah kepada Allah, lalu juallah. Kamu akan mendapatkan kebaikan didalamnya.",
+      "Bergegaslah, maka kamu akan memperoleh keuntungan di dalam harganya.",
+      "Tahanlah. Terdapat kekurangan darimu didalamnnya.",
+      "Terdapat tambahan kebaikkan dan manfaat didalamnya. Segeralah nelakukan penjualan.",
+      "Tidak ada kebaiakn untukmu. Tinggalkanlah.",
+      "Terdapat keuntungan dan kebaikan untukmu didalamnya."
+    ]
+  },
+  {
+    "title": "Belanja Barang Berharga",
+    "subtitle": "Belanja Sekarang atau Ditunda.",
+    "group": "Masyriq",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Belanjalah. Terdapat keberkahan dan kebaikan untukmu.",
+      "Jangan belanja. Tidak terlihat apapun keccuali cepatnya kerusakan didalam barang tersebut.",
+      "Belanjalah. Maka kamu akan mendapatkan rizki dedalamnya.",
+      "Belanjalah. Bertawakallah kepada Allah, maka kamu akan mendapatkan rizki.",
+      "Tahanlah sejenak. Kamu akan mendapatkan petunjuk kepada keberhasilan.",
+      "Bersabarlah, jangan tergesa-gesa.",
+      "Lakukanlah, maka kamu akan mendapatkan petunjuk kepada kebaikan.",
+      "Menunda membelanjakannya akan membuat kamu rugi.",
+      "Belanjalah. Terdapat keberkahan juga kemanfaatan didalamnya.",
+      "Bersabarlah. Tidak ada kebaikannya untukmu.",
+      "Bergegaslah. Terdapat keuntungan yang nyata untukmu didalamnya.",
+      "Bergegaslah. Terdapat keuntungan yang nyata untukmu didalamnya.",
+      "Belanjalah. Kamu akan mendapatkan keberkahan didalamnya."
+    ]
+  },
+  {
+    "title": "Belanja Hamba Sahaya",
+    "subtitle": "Belanja Sekarang atau Nanti.",
+    "group": "Masyriq",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Tawakallah kepada Allah. Belanjakan, kamu akan mendapatkan rezeki.",
+      "Jangan mendekatinya. Terdapat keburukan dan bahaya bagimu didalamnya.",
+      "Belanjalah. Kamu akan mendapati keberkahan dan kebaikan.",
+      "Waspadalah didalam kesempatan kali ini. Jangan belanja dulu.",
+      "Belanjalah. Sungguh terlihat kemanfaatannya.",
+      "Tidak ada kebaikan untukmu di kesempatan ini.",
+      "Bersegeralah. Kamu akan mendapatkan kebaikan dan penye berbagai kebaikan darinya.",
+      "Bersabarlah di kesempatan ini hingga kesempatan berikutnya, maka kamu akan mendapatkan kebaikan.",
+      "Bergegaslah, kamu akan menjumpai segala kebaikan didalamnya.",
+      "Dahulukan bertawakal kepada Allah. Lalu belanjalah, maka kamu akan mendapatkan kebaikan.",
+      "Bersabarlah, jangan tergesa-gesa, nanti kamu akan menyesal dan menjadi rusak.",
+      "Bergegaslah, kamu akan mendapatkan kebaikan dan rezeki.",
+      "Bersegeralah, kamu akan menjumpai keuntungan nyata didalamnya."
+    ]
+  },
+  {
+    "title": "Belanja Hewan Ternak",
+    "subtitle": "Belanja Sekarang atau Tunda.",
+    "group": "Masyriq",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Tawakallah kepada Allah. Belanjakan, kamu akan mendapatkan rezeki.",
+      "Terdapat kebaikan untukmu.",
+      "Waspadalah. Jangan mendekatinya. Kamu akan rugi dan menyesal.",
+      "Tawakallah kepada Allah, maka kamu akan mendapatkan rezeki.",
+      "Belanjalah, maka kamu akan mendapatkan rezeki, petunjuk dan keuntungan.",
+      "Bersabarlah. Cari lainnya. Tidak ada kebaikan untnukmu didalamnya.",
+      "Bersegeralah, maka kamu akan mendapatkan kebaikan.",
+      "Tahanlah dulu. Tidak ada kebaikan untukmu didalamnya di kesempatan ini.",
+      "Segeralah. Ini waktu yang baik untuk melakukannya.",
+      "Belanjalah. Terdapat kebaikan didalamnya untukmu.",
+      "Terimalah kabar gembira ini, berupa balasan kebaikan didalamnya.",
+      "Besegeralah. Kamu akan mendapatkan rezeki yang luas didalamnya.",
+      "Waspadalah belanja di kesempatan ini. Kamu akan mendapatkan kerugian dan kerusakan."
+    ]
+  },
+  {
+    "title": "Perjalanan Darat",
+    "subtitle": "Keadaan Perjalanannya.",
+    "group": "Masyriq",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Berangkatlah atas keberkahan dan penjagaan Allah. Kamu akan mendapatkan rezeki.",
+      "Bersabarlah pada kesempatan ini. Tidak ada keuntunga untukmu didalamnya.",
+      "Berangkatlah. Kamu akan mendapat keuntungan.",
+      "Bersabarlah sejenak. Karena ada sedikit hambatan.",
+      "Berangkatlah, seraya bertawakal kepada Allah. Kamu akan kembali darinya dengan selamat dan membawa keuntungan.",
+      "Waspadalah di kesempatan ini. Tidak ada kebaikan untukmu didalamnya.",
+      "Ada kebaikan untukmu didalamnya. Berangkatlah dan kamu akan mendapatkan rezeki.",
+      "Bersabarlah sejenak. Cari waktu yang lain.",
+      "Bersegeralah. Kamu akan mendapatkan rezeki.",
+      "Bergegaslah, karena didalamnya ada kebaikan yang melimpah untukmu.",
+      "Tundalah sejenak, maka kamu akan mendapatkan petunjuk kepada kebaikkan.",
+      "Berangkatlah. Terdapat kebaikan nyata untukmu. Maka bersegeralah.",
+      "Bersabarlah sejenak, maka kamu akan mendapatkan petunjuk kebaikan."
+    ]
+  },
+  {
+    "title": "Perjalanan Laut",
+    "subtitle": "Keadaan Perjalanannya.",
+    "group": "Masyriq",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Kamu akan mendapatkan rezeki yang luas di dalamnya.",
+      "Waspadalah. Terlihat keburukan yang cepat didalamnya untukmu.",
+      "Berangkatlah di dalam Penjagaan Allah. Kamu akan kembali dalam keadaan selamat dan membawa keuntungan.",
+      "Jangan dulu berangkat dalam kesempatan ini. Sungguh ada orang-orang perusak beraroma wangi yang siap mencelakakanmu.",
+      "Berangkatlah dalam keberkahan dan penjagaan Allah. Kamu akan mendapatkan rezeki .",
+      "Terdapat kejelekan yang cepat bagimu didalamnya. Tinggalkanlah dikesempatan ini.",
+      "Bergegaslah. Kamu akan mendapatkan kebaikan dan keuntungan didalamnya.",
+      "Tawakallah kepada Allah. Berangkatlah. kamu akan mendapatkan keuntungan didalamnya.",
+      "Berangkatlah. Terdapat kebaikan untukmu.",
+      "Berangkatlah dalam keberkahan dan penjagaan Allah. Kamu akan mendapatkan rezeki.",
+      "Waspadalah dikesempatan kali ini. Cari waktu lain.",
+      "Bersegeralah. kamu akan mendapatkan kesenangan dan keberkahan.",
+      "Waspadalah. Terlihat ada sekelompok perusak yang sudah siap melakukan aksinya."
+    ]
+  },
+  {
+    "title": "Mata Pencaharian",
+    "subtitle": "Baik atau tidak mata pencaharian yang sedang dan akan dilakukan.",
+    "group": "Masyriq",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Kamu akan mendapatkan rezeki. Kamu wajib bergabung, jangan lupakan itu, maka kamu mendapatkan petunjuk. Kamu akan mendapatkan rezeki. Kamu wajib bergabung, jangan lupakan itu, maka kamu mendapatkan petunjuk.",
+      "Tetaplah pada mata pencaharian ini, kamu akan mendapatkan rezek didalamnya.",
+      "Lakukan cita-citamu didalamnya, maka kamu akan mendapatkan segala kebaikan didalamnya.",
+      "Tidak ada kebaikan didalamnya untukmu di kesempatan ini. Waspadalah.",
+      "Tetaplah pada mata pencaharian ini. Terlihat kemanfaatan didalamnya.",
+      "Bersegeralah. Bergabunglah. Maka kamu akan mendapatkan kebaikan dengan bergabungnya.",
+      "Bergabunglah. Kamu akan mendapatkan kemanfaatan didalamnya.",
+      "Kamu akan mendapatkan kenikmatan dan keberkahan didalamnya.",
+      "Tidak ada kebaikannya didalamnya untukmu dikesempatan kali ini.",
+      "Bergegaslah, kamu akan mendapatkkan petunjuk kebaikan dan kebahagiaan didalamnya.",
+      "Sibukkanlah didalam menghasilkannya. Kamu akan menjumpai segala kebaikan didalamnya.",
+      "Bersungguh-sungguhlah didalamnya. Kamu akan memperoleh kebaikan besar didalamnya.",
+      "Berusaha dan tidak berusaha di dalam mata pencaharian ini, keadaanya sama saja utnukmu saat ini."
+    ]
+  },
+  {
+    "title": "Bajak Ladang",
+    "subtitle": "Bersungguh-sunggulah, maka kamu akan mendapatkan keuntungan dan rezeki didalamnya.",
+    "group": "",
+    "answers": [
+      "Bajak Ladang",
+      "Apakah tepat untuk membajak ladang.",
+      "Masyriq",
+      "HAL",
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Tidak ada kebaikan untukmu didalamnya. Sama saja untuk mata pencaharian ataupun lainnya untuk saat ini.",
+      "Bersungguh-sungguhlah, maka kamu akan mendapat rezeki didalamnya. Baik untuk mata pencaharian ataupun untuk lainnya.",
+      "Terdapat kebaikan untukmu. Bersegeralah.",
+      "Tidak ada kebagusan untukmu dikesempatan ini. Urungkanlah dahulu.",
+      "Bersegeralah. Kamu akan mendapat segala kebaikan didalamnya.",
+      "Tidak ada kebaikan selamanya untukmu didalamnya.Menujulah ke hal lainnya.",
+      "Membajaklah. Terdapat kebaikan dan keberkahan.",
+      "Tidak ada kebagusan di kesempatan ini. Sabarlah.",
+      "Lakukanlah. Kamu akan mencapai tujuanmu."
+    ]
+  },
+  {
+    "title": "Pertolongan Atas Musuh",
+    "subtitle": "Menang atau kalah.",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Kamu menang atas mereka.",
+      "Waspadalah. Mereka dapat mengalahkanmu.",
+      "Kamu orang yang tertolong dari mereka.",
+      "Kamu menang atas mereka.",
+      "Kamu kalah atas mereka. Waspadalah.",
+      "Kamu tertolong dan menang.",
+      "Berdoalah melalui Ayat-ayat Allah. Tipuan mereka sangat kuat.",
+      "Kamu menang atas mereka.",
+      "Waspadalah. Mereka dapat mengalahkanmu",
+      "Perbanyaklah memohon kepada Allah. Maka kamu akan mendapatkan pertolongan DariNYA.",
+      "Kamu menang dan tertolong.",
+      "Bersabar atas mereka lebih utama untukmu. Perkaranya bersama mereka para musuh sama saja.",
+      "Kamu tertolong dan menjadi kuat."
+    ]
+  },
+  {
+    "title": "Peradilan",
+    "subtitle": "Menang atau kalah diperadilan.",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Waspadalah dari persengketaanmu. Karena ia akan mengalahkanmu.",
+      "Bahagialah. Kamu orang yang ditolong dari persengketaanmu.",
+      "Bahagialah. Kamu orang yang ditolong dari persengketaan dengan mereka.",
+      "Waspadalah. Persengketaanmu akan mengalahkanmu.",
+      "Bahagialah. Kamu akan memenangkannya.",
+      "Kamu akan memenangkannya.",
+      "Kamu menjadi pihak yang kalah.",
+      "Kamu menjadi pihak yang menang setelah mereka mengalahkanmu.",
+      "Kamu menjadi pihak yang kalah dan ditaklukan.",
+      "Kamu menjadi pihak yang menang atas persengketaanmu.",
+      "Bahagialah terhadap pertolongan atas persengketaanmu.",
+      "Waspadalah. Sesungguhnya persengketaan ini membuat kamu kalah.",
+      "Kamu menjadi pihak yang menang."
+    ]
+  },
+  {
+    "title": "Orang yang dipenjara",
+    "subtitle": "Bebas atau tidak dari penjara.",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Lama masa tahannya. Setelah itu dibebaskan.",
+      "Segera bebas dari penjara.",
+      "Perkaranya sangat sulit. Mohonlah kemudahan dar Allah.",
+      "Sebentar lagi bebas dari penjara.",
+      "Perkaranya sangat sulit. Mohonlah kemudahan dari Allah.",
+      "Akan bebas dari penjara.",
+      "Perkara sulit. Bertawasullah melalui ayat-ayat Al Qur'an.",
+      "Sudah dekat waktu pembebasannya.",
+      "Perkaranya sulit. Namun pertolongan Allah sangat dekat. Berbahagialah.",
+      "Perkaranya tertunda, Tidak dapat terburu-buru.",
+      "Sudah dekat waktu pembebasannya.",
+      "Terdapat potensi lama masa tahannya.",
+      "Sebentar lagi bebas dari penjara."
+    ]
+  },
+  {
+    "title": "Kekuasaan",
+    "subtitle": "Menerima kekuasaan atau tidak.",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Jangan kamu mendekatnya. tidak ada kebaikan untukmu selain penyeselan dan kerugian.",
+      "Jabatlah. Kamu akan menjumpai bagian yang melimpah.",
+      "Tawakallah kepada Allah dan jabatlah. Kamu akan mendapatkan keadilan didalamnya.",
+      "Tidak ada kebaikan untukmu didalamnya selain keburukan yang diselimuti bau harum.Waspadalah.",
+      "Bersegeralah. Kamu akan mendapatkan kemuliaan yang menjulang tinggi atas tandingan-tandinganmu.",
+      "Jangan mendekatinya. Kamu akan menyesal dan merugi.",
+      "Tidak ada kemaslahatan maupun mudharat untukmu didalamnya.",
+      "Jangan mendekatinya. Sungguh akan banyak perseturuan didalamnya.",
+      "Jabatlah. Kamu akan mendapatkan berbagai manfaat didalamnya.",
+      "Jabatlah. Kamu akan mendapatkan rezeki didalamnya.",
+      "Cegahlah. Tidak terlihat untukmu selain susah payah belaka.",
+      "Menjabat ataupun tidak, sama saja keadaannya.",
+      "Tawakallah kepada Allah, maka kamu akan mendapatkan petunjuk kebaikan didalamnya."
+    ]
+  },
+  {
+    "title": "Menghadap Pejabat",
+    "subtitle": "Tepat atau tidak momen menghadapinya.",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Jangan dahulu mendekatnya. Terlihat ada keburukan yang jelas didalamnya.",
+      "Tawakallah kepada Allah. Menghadaplah. Akan kamu dapati kebaikan didalamnya.",
+      "Waspadalah. Kamu hanya menyia-nyiakan dirimu saja.",
+      "Menghadaplah. Akan kamu raih faedah kemashlahatan didalamnya.",
+      "Waspadalah. Jangan dahulu mendekat mereka, nanti menyesal.",
+      "Bersegeralah. Terdapat kemanfaatan didalamnya.",
+      "Waspadalah. Kamu bisa tertimpa bencana.",
+      "Jangan menghadap mereka. Waspadalah. Cari selain mereka.",
+      "Menghadaplah. Akan kamu peroleh sesuatu dari mereka.",
+      "Tunda dahulu di kesempatan ini.",
+      "Lakukanlah. Akan kamu jumpai kemanfaatan didalamnya.",
+      "Jangan mendekat mereka dahulu kesempatan ini.",
+      "Mereka laksana racun untukmu. Terlihat sesuatu yang bisa membuatmu takut."
+    ]
+  },
+  {
+    "title": "Isolasi",
+    "subtitle": "Mengasingkan diri atau tidak.",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Asingkanlah dirimu dari mereka. Akan kamu dapati kebaikan.",
+      "Bersabarlah. Tidak ada kebaikan untukmu didalam menjaga jarak dengan mereka.",
+      "Isolasi dirilah. Terdapat kebaikan untukmu dari pada bersamanya.",
+      "Terdapat kebaikan yang banyak. Baik itu dari para penguasa, masyarakat atau lainnya.",
+      "Asingkanlah dirimu dari mereka. Akan kamu dapati keberkahan dari selain mereka.",
+      "Jangan lakukan itu. Bersama dengan mereka akan baik untukmu.",
+      "Bersegeralah. Terdapat kebaikan untukmu didalamnya.",
+      "Bersabarlah bersama mereka sejenak. Nanti diwaktu yang lain saja.",
+      "Bersama atau menjaga jarak terhadap mereka, itu sama saja.",
+      "Bersegeralah. Akan kamu dapatkan kebahagiaan dan kebaikan.",
+      "Bersabar dahulu bersama mereka sampai kesempatan lainnya.",
+      "Lakukanlah. Akan kamu dapati kebaikan didalamnya.",
+      "Bersegeralah. Terdapat kebaikan untukmu didalamnya."
+    ]
+  },
+  {
+    "title": "Peperangan",
+    "subtitle": "Tepat atau tidak memulai peperangan.",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Jangan berperang, nanti akan menyesal. Bersabar lebih utama untukmu.",
+      "Jangan berperang. Mereka akan merusak berbagai kebutuhanmu. Waspadalah.",
+      "Tidak ada kebaikan untukmu didalam memerangi mereka. Terlihat keburukan untukmu didalamnya.",
+      "Berperanglah. Akan kamu dapati kemenangan dan kemulian darinya.",
+      "Janganlah berperang. Kamu akan menyesal dan merugi.",
+      "Lakukan apa yang kamu niati. Maka kamu akan mulia lewat kemenangan.",
+      "Waspadalah apa yang kamu niatkan ini. Karena ini hanya akan menyia-nyiakan dirimu saja.",
+      "Janganlah berperang. Kamu akan menyesal dan merugi.",
+      "Segeralah. Kamu akan menang dan beruntung.",
+      "Cegahlah berperang. Terlihat akan menimbulkan kehinaan dan kerendahan bagimu.",
+      "Bergegaslah. Kamu akan mendapatkan kemenangan.",
+      "Waspadalah. Terlihat kamu akan mendapatkan kerusakan yang banyak.",
+      "Waspadalah. Keadaanmu bisa rusak karenanya."
+    ]
+  },
+  {
+    "title": "Perdamaian",
+    "subtitle": "Berdamai saat ini atau nanti.",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Jangan berdamai. Nanti akan menyesal.",
+      "Berdamai dengannya lebih baik untukmu daripada memusuhinya.",
+      "Bersegeralah. Akan tercegah keburukan dengan adanya perdamaian.",
+      "Tundalah di kesempatan ini. cari kesempatan yang lainnya.",
+      "Berdamailah. Maka kamu akan bahagia.",
+      "Bersegeralah. Kamu akan mendapatkan kebaikan dan kehormatan.",
+      "Jangan berdamai. Hanya akan menambah keburukan.",
+      "Berdamailah. Akan kamu raih kebaikan dan keamanan.",
+      "Tahanlah dirimu dari berdamai. Bersabar dahulu.",
+      "Lakukanlah. Kamu akan sampai pada tujuan dan kemashlahatan.",
+      "Jangan lakukan itu selamanya. Tinggalkanlah, maka kamu akan mendapatkan petunjuk kebaikan.",
+      "Berrdamailah dengannya.",
+      "Bersegeralah. Terlihat ada ketentraman didalamnya."
+    ]
+  },
+  {
+    "title": "Jihad",
+    "subtitle": "Jihad saat ini atau nanti.",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Segeralah berihad, akan kamu dapati apa yanng kamu inginkan.",
+      "Tunda dahulu di kesempatan ini, karena hanya akan menimbulkan keburukan.",
+      "Jihadlah, maka akan mendapatkan berbagai kenikmatan dan keberkahan.",
+      "Bersabarlah pada kesempatan ini.",
+      "Bergegaslah. Akan kamu saksikan kemashlahatan akhiratmu.",
+      "Bersabarlah, karena hanya akan menimbulkan kehinaan yang besar belaka.",
+      "Laksanakanlah. Akan kamu dapati ghanimah dan rezeki didalamnya.",
+      "Jangan berjihad dulu di kesempatan ini, karna banyak rintangan didalamnya.",
+      "Sabarlah sejenak, maka kamu akan mendapatkan petunuk kemenanganmu.",
+      "Bersegeralah. Akan kamu raih kemengan sempurna didalamnya.",
+      "Berjihadlah. Akan kamu dapati kemenangan dan kebaikan.",
+      "Bersabarlah sejenak dikesempatan ini, maka kamu akan mendapat petunjuk didalamnya.",
+      "Bergegaslah. Akan kamu raih keuntungan yang melimpah."
+    ]
+  },
+  {
+    "title": "Haji & Umrah",
+    "subtitle": "Kapan waktu baiknya.زززززز",
+    "group": "Syimal",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Berangkatlah atas keberkahan Allah. Kamu akan mencapainya.",
+      "Niatmu tidak akan terwujud di waktu ini. Bersabarlah.",
+      "Bersegeralah, kamu akan beruntung.",
+      "Bersegeralah, maka kamu akan mendapatkan kebaikan dan kenikmatan.",
+      "Berangkatlah segera, maka kamu akan mewarisi kebaikan.",
+      "Bersabarlah di kesempatan ini. Terdapat kerugian didalamnya.",
+      "Bersegerlah, kamu akan mendapatkan kebaikan dan kemuliaan.",
+      "Sabarlah sejenak, jangan tergesa-gesa, nanti kamu akan menyesal.",
+      "Bersegeralah, maka kamu akan mendapatkan kebaikan.",
+      "Terdapat kebaikan dan keberuntungan didalamnya.",
+      "Bergegaslah, maka kamu akan menjumpai tujuanmu, akan tetapi kamu akan mengalami sedikit kerugian duniawi.",
+      "Sabar sejenak. Tunda hinngga tahun berikutnya.",
+      "Bergegaslah, maka kamu akan mencapai tujuanmu."
+    ]
+  },
+  {
+    "title": "Pernikahan",
+    "subtitle": "Bagus atau tidak pernikahan ini.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Berangkatlah atas keberkahan Allah. Kamu akan mencapainya.",
+      "Waspadalah melaksanakan pernikahan di kesempatan ini, karena tidak mudah.",
+      "Bersegeralah. Akan kamu dapati kebaikan dan keberkahan.",
+      "Saat ini sulit urusannya. Jangan dulu melakukannya di kesempatan ini.",
+      "Bersegeralah. Akan kamu jumpai segala kebaikan didalamnya.",
+      "Bersabarlah di kesempatan ini. Karena saat ini masih belum mudah untukmu.",
+      "Bersegeralah. Akan kamu jumpai kebaikan dan rezeki.",
+      "Tidak ada kebaikan untukmu didalamnya. Carilah selainnya. Karena ada suatu penghalang didalamnya.",
+      "Nikahilah. Akan kamu jumpai kebaikan dan keberkahan.",
+      "Tundalah dahulu dikesempatan ini. Carilah waktu lainnya.",
+      "Bersegeralah. Akan kamu jumpai beraneka ragam kebaikan yang berlipat-lipat.",
+      "Terdapat keburukan didalamnya. Tidak ada kebaikan. Waspadalah darinya.",
+      "Terdapat keberuntungan dan kebaikan yang nyata didalamnya. Bersegeralah."
+    ]
+  },
+  {
+    "title": "Keturunan",
+    "subtitle": "Mendapatkan keturunan atau tidak.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Urusannya sangat sulit atasmu. Berikhtiarlah melalui Ayat-ayat Al Qur'an.",
+      "Kamu akan mendapatkan keturunan setelah waktu ini.",
+      "Bahagialah. Kamu akan mendapatkan keturunan.",
+      "Sangat sulit atasmu. Mohonlah selalu kepada Allah.",
+      "Bahagialah. Akan kamu dapatkan anak keturunan di waktu dekat.",
+      "Urusannya sangat sulit atasmu. Berikhtiarlah melalui Ayat-ayat Al Qur'an.",
+      "Bahagialah. Kamu akan mendapatkkan keturunan.",
+      "Terus berikhtiar atasnya. Kamu akan mendapatkannya.",
+      "Kamu akan mendapatkannya setelah masa ini.",
+      "Mohon kepada Allah. Urusannya masih banyak halangan dikesempatan ini.",
+      "Urusannya sangat sulit. Mohonlah kepada Allah untuk kemudahannya.",
+      "Mohon pertolonganlah dengan Asma'ul Husna. Akan kamu dapatkan anak keturunan.",
+      "Kamu akan mendapatkannya setelah kesempatan ini."
+    ]
+  },
+  {
+    "title": "Kehamilan",
+    "subtitle": "Keadaan janin di kandungan.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Lahir anak laki-laki yang diberkahi.",
+      "Mengandung anak perempuan yang diberkahi.",
+      "Lahir anak laki-laki.",
+      "Lahir anak laki-laki yang diberkahi.",
+      "Lahir anak laki-laki yang ahli ilmu.",
+      "Lahir anak perempuan yang shalihah.",
+      "Mengandung anak perempuan yang shalihah.",
+      "Lahir anak perempuan yang diberkahi.",
+      "Lahir anak laki-laki yang shalih.",
+      "Lahir anak laki-laki yang diberkahi.",
+      "Mengandung anak perempuan yang diberkahi.",
+      "Lahir anak perrempuan yang diberkahi.",
+      "Lahir anak laki-laki yang diberkahi juga shalih."
+    ]
+  },
+  {
+    "title": "Perceraian",
+    "subtitle": "Cerai atau tidak.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Tahanlah dulu. Jangan diceraikan. Kamu akan merugi dan menyesal.",
+      "Ceraikanlah, kamu akan mendapatkan petunjuk kepada kebaikan.",
+      "Ceraikan. Akan kamu jumpai kebaikan didalamnya.",
+      "Ceraikan. Kamu akan mendapatkan petunjuk kebaikan dan rezeki.",
+      "Tahanlah dahulu. Waspada melakukannya di kesempatan ini.",
+      "Ceraikan. Akan kamu jumpai orang lain penggantinya yang membawa kebaikan untukmu.",
+      "Waspadalah. Ada penyesalan dan kerugian didalamnya.",
+      "Tahanlah dahulu. Bertaqwalah kepada Allah, maka kamu akan mendapat kebaikan.",
+      "Segerakanlah. Akan kamu jumpai kebaikan didalamnya.",
+      "Ceraikanlah, dan carilah orang penggantinya, maka kamu akan mendapat rezeki darinya.",
+      "Jangan ceraikan. Kamu akan merugi dan menyesal. Waspadalah.",
+      "Tahanlah dahulu, janngan kamu ceraikan, nanti kamu akan menyesal dalam waktu dekat.",
+      "Menceraikannya lebih baik daripada mempertahankannya."
+    ]
+  },
+  {
+    "title": "Menetap di suatu tempat",
+    "subtitle": "Menetap disitu atau tidak.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Makmurkanlah dan meneteplah disitu. Akan kamu dapatkan keberkahan didalamnya.",
+      "Bersabarlah di kesempatan ini, jangan dahulu memakmurkannya.",
+      "Makmurkanlah dan menetaplah disitu. Akan kamu peroleh keberkahan.",
+      "Tunda dahulu sejenak. Kamu akan mendapatkan petunjuk kebaikan.",
+      "Tawakallah dan meneteplah. kamu akan mendapatkan rezeki.",
+      "Tetaplah disitu. Kamu akan mendapatkan keberkahan dan kebaikan.",
+      "Jaga arak darinya. Tidak ada keberuntungan selamanya untukmu disitu. Jangan memakmurkannya.",
+      "Jangan memakmurkan dan menetap disitu. Tidak ada keberuntungan didalamnya.",
+      "Jangan menetap dan memakmurkannya. Keberintunganmu hanya sedikit didalamnya.",
+      "Keberuntunganmu bertambah-tambah didalamnya. Juga berbagai kebaikan yang nyata didalamnya.",
+      "Tidak ada keberuntunga untukmu di dalam tempat itu. Carilah tempat lainnya.",
+      "Tinggal disitu akan mendatangkan rezeki keberkahan dan kebaikan untukmu.",
+      "Menetaplah disitu. Akan kamu dapati keberkahan didalamnya."
+    ]
+  },
+  {
+    "title": "Pindah dari suatu tempat",
+    "subtitle": "Pindah atau tetap disitu.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Bersegeralah. Akan kamu dapati kebaikan didalamnya.",
+      "Tunda dahulu di kesempatan lain, maka kamu akan mendapatkan kebaikan.",
+      "Bersegeralah. Kamu akan mendapat petunjuk untu kemashlahatanmu.",
+      "Bersegeralah. Akan kamu dapatkan rezeki yang lebih baik dari tempatmu saat ini.",
+      "Jangan berpindah, nanti kamu akan menyesal.",
+      "Pindahlah pada kesempatan ini. Akan kamu dapati kebaikan didalamnya.",
+      "Jangan tergesa-gesa. Bersabarlah dahulu.",
+      "Pindahlah. Ini lebih baik untukmu daripada tempatmu saat ini.",
+      "Jangan berpindah dari tempatmu sekarang. Tidak kamu jumpai tempat yang lebih baik darinya.",
+      "Pindahlah. Kamu akan menjumpai kebaikan yang lebih dari saat ini.",
+      "Jangan pindah, nanti akan terjadi kerusakan bagimu.",
+      "Bersabarlah. Maka kamu akan mendapatkan petunjuk kepada kebaikan.",
+      "Kamu mesti pindah dari situ, maka kamu akan mendapat petunjuk dan juga rezeki."
+    ]
+  },
+  {
+    "title": "Hajat dalam hatimu",
+    "subtitle": "Berhasil atau tidak.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Hajat terpenuhi dan berhasil.",
+      "Sangat sulit dan baru akan terpenuhi setelah bersusah payah.",
+      "Terpenuhi dan akan sampai kepadamu di waktu dekat.",
+      "Sangat sulit dan gagal.",
+      "Terpenuhi dan akan sampai kepadamu.",
+      "Urusannya sedikit telat.",
+      "Urusannya mudah, namun tidak bisa tercapai.",
+      "Tercapai seperti yang kamu inginkan.",
+      "Tercapai diwaktu dekat. Akan sampai kepadamu.",
+      "Urusannya sedikit sulit, namun akan terpenuhi.",
+      "Tercapai dan berhasil.",
+      "Urusannya sangat sulit sekali hingga saat ini.",
+      "Tercapai seperti yang kamu hendaki."
+    ]
+  },
+  {
+    "title": "Hasil Sebuah Urusan",
+    "subtitle": "Bagaimana hasil usahanya.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Hasilnya baik dan memberikan faedah kemashlahatan.",
+      "Hasilnya baik.",
+      "Tidak baik untukmu. Kamu tidak mendapatkan sesuatu didalamnya selamanya.",
+      "Hasilnya baik, beruntung dan keberhasilan.",
+      "Tinggalkanlah. Tidak ada kebaikan untukmu didalamnya. Carilah hal lainya.",
+      "Bahagialah. Akan kamu raih hal itu di waktu dekat.",
+      "Hasilnya baik. Akan kamu jumpai sesuatu yang memudahkanmu didalamnya.",
+      "Tidak aman hasilnya untukmu jika mengerjakkannya. Bersabar adalah yang lebih utama.",
+      "Istikharalah, agar kamu mendapatk kebaikan didalamnya.",
+      "Hasilnya adalah petunjuk kebaikan dan kemashalatan untukmu.",
+      "Hasilnya adalah sesuatu yang kamu rela atasnya.",
+      "Hasilnya adalah sebuah faedah yang menggembirakanmu.",
+      "Hasilnya kesenangan dan kenikmatan."
+    ]
+  },
+  {
+    "title": "Meminta Hajat Ke Orang",
+    "subtitle": "Waktu yang tepat untuk meminta atau tidak.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Jangan kamu sampaikan dan minta kepadanya. Selamanya tidak ada kebaikan untukmu didalamnya.",
+      "Mintalah. Terdapat kebaikan yang nyata untukmu didalamnya.",
+      "Sampaikanlah hajatmu. Terdapat faedah kebaikan yang nyata didalamnya.",
+      "Jangan memintanya untuk selamanya. Tidak ada kebaikan untukmu didalamnya jika kamu menyampaikannya.",
+      "Segeralah. Kamu akan mendapatkan kebaikan didalamnya.",
+      "Tunda dahulu. Jangan kamu memintanya.",
+      "Mintalah dan sampaikanlah.",
+      "Sampaikanlah. Terdapat kebaikan didalamnya.",
+      "Hajatnya ini sangat besar untukmu. Sabarlah dahulu.",
+      "Permintaanmu ini dapat membuatmu menjadi rendah dihadapanya. Waspadalah.",
+      "Jangan memintanya. Tidak ada kebaikan untukmu didalamnya.",
+      "Mintalah. Terdapat kebaikan yang melimpah didalamnya.",
+      "Urusannya sangat susah utnukmu, tinggalkanlah."
+    ]
+  },
+  {
+    "title": "Kabar",
+    "subtitle": "Benar atau Hoax kabar ini.",
+    "group": "Magrib",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Jangan kamu dustakan. Kabar itu benar adanya.",
+      "Tidak berdasar. Tidak nyata semuanya.",
+      "Tidak diragukan lagi. Kabar itu benar adanya.",
+      "Mohonlah kebaikan kepada Allah. Kabar itu benar adanya.",
+      "Tidak berdasarkan kabar yang sampai kepadamu. Tunggulah kabar lainnya.",
+      "Kabar itu nyata adanya.",
+      "Tidak berdasar dan tidak yang sebenarnya.",
+      "Kabarnya benar apa adanya.",
+      "Tidak berdasar. Jangan kamu percayai sepenuhnya, meski sebagiannya adalah benar.",
+      "Kabar benar dan nyata adanya.",
+      "Kabar yang sampai kepadamu benar adanya.",
+      "Kabarnya benar adanya.",
+      "Jangan kamu mempercayainya. Karena tidak berdasar. Semuanya tidak nyata."
+    ]
+  },
+  {
+    "title": "Orang Sakit",
+    "subtitle": "Sembuh atau tidak.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Sembuhkan dengan Ayat as-Syifa (Ayat Penyembuhan) dari al-Qur'an. Sesungguhnya ia bisa sembuh dengannya.",
+      "Sakitnya sangat sulit. Menghadapla kepada Allah, dan mohonlah kesembuhan kepadaNYA.",
+      "Ia akan sembuh.",
+      "Obatilah dengan Ayat-ayat Allah, dan mohonlah kesembuhan.",
+      "Ia akan sembuh.",
+      "Sakitnya kritis. Perkaranya sangat sulit. Mohonlah kepada Allah.",
+      "Ia akan segera sembuh.",
+      "Obatilah dengan berbagai obat. Mohon kesembuhan dari Allah.",
+      "Ia akan sembuh dengan cepat.",
+      "Sakitnya lama, namun akan sembuh.",
+      "Sakitnya sembuh dengan cepat. Obati dengan Asma'ul Husna.",
+      "Obatilah dengan Ayat-ayat al-Qur'an al'Adzim. Sesungguhnya sakitnya akan hilang.",
+      "Ia akan sembuh dari sakitnya."
+    ]
+  },
+  {
+    "title": "Obat",
+    "subtitle": "Baik atau tidak obat ini.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Tawakallah kepada Allah. Lakukanlah. Kamu adan dapati kebaikan didalamnya.",
+      "Waspadalah. Terlihat kemudharatan yang sangat didalamnya.",
+      "Tawakallah kepada Allah. Lakukanlah. Akan bermanfaat pbatnya untukmu.",
+      "Sabar dahulu di kesempatan ini utnuk menggunakannya.",
+      "Jangan dekati itu selamanya. Sesungguhnya itu berbahaya untukmu.",
+      "Jangan kamu gunakan. Tinggalkan, tidak ada kebaikan untukmu didalamnya. Baik itu untuk sakit atau lainnya.",
+      "Tawakallah kepada Allah. Gunakan obat itu. Allah semoga akan memberimu manfaat dengannya.",
+      "Lakukanlah. Tawakallah kepada Allah. Akan kamu dapatkan berbagai kebaikan didalamnya.",
+      "Tidak ada kebaikan untukmu didalammnya, baik untuk sakit atau lainnya. Abaikan itu.",
+      "Tawakallah kepada Allah. Lakukanlah. Allah akann memberi kemanfaatan untukmu dengannya.",
+      "Tinggalkanlah. Akan menambah parah sakitnya dengannya.",
+      "Jangan dekati obat itu. Baik untuk sakit atau lainnya. tidak ada manfaatnya untukmu didalamnya.",
+      "Gunakanlah. Tawakallah kepada Allah. Kamu akan dapatkan kebaikan didalamnya."
+    ]
+  },
+  {
+    "title": "Tafsir Mimpi",
+    "subtitle": "Bagaimana tafsir mimpinya.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Keluhuran yang sempurna.",
+      "Langgengnya kebaikan dan kesenangan.",
+      "Kebaikan dan keselamatan.",
+      "Percayailah mimpi itu dan menghadaplah kepada Allah, maka kamua akan aman dari akibatnya.",
+      "Bertambahnya harta dan keturunan.",
+      "Penjagaan dari keselamatan.",
+      "Teruslah muraqabah kepada Allah. Mohonlah perrlindunganNYA. Mohonlah kepadaNYA kesehatan.",
+      "Keluhuran dan bertambahnya kebaikan.",
+      "Penambahan kebaikan dan keluhuran.",
+      "Kelapangan atas kesempitan hidup.",
+      "Teruslah muraqabah kepada Allah. Percaya lepada Allah. Teruslah bersungguh-sungguh didalam kebaikan. Sesungguhnya Allah Maha Mulia dan Maha Lembut.",
+      "Bertambah harta dan keturunannya.",
+      "Kebaikan yang bertambah."
+    ]
+  },
+  {
+    "title": "Orang Hilang",
+    "subtitle": "Keadaan orang hilang.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Berbahagialah. Ia akan segera datang kepadamu.",
+      "Ia sedang bimbang untuk kembali.",
+      "Sebentar lagi ia akan datang kepadamu.",
+      "Saat ini, ia sedang bimbang untuk kembali.",
+      "Ia akan datang kepadamu di waktu dekat.",
+      "Ia sedang sibuk memikirkan jalan kembali kepadamu di waktu ini.",
+      "Ia akan segera datang. Kegundahannya sudah hilang.",
+      "Ia sedang bimbang untuk kembali. Tapi akan kembali setelah hilang bimbangnya.",
+      "Ia akan datang kepadamu diwaktu dekat.",
+      "Ia hilang untuk waktu yang lama.",
+      "Bahagialah dengan perrjumpaan kembali dengannya di waktu dekat.",
+      "Ia sedang bimbang untuk kembali.",
+      "Ia akan datang kepadammu di waktu dekat."
+    ]
+  },
+  {
+    "title": "Barang Hilang",
+    "subtitle": "Keadaan barang hilang.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Akan kembali lagi kepadamu.",
+      "Akan kembali lagi kepadamu di waktu dekat.",
+      "Berbahagialah. barang hilangmu akan kembali.",
+      "Tidak akan kembali kepadamu selamanya.",
+      "Pada waktu dekat akan kembali.",
+      "Berhentilah mengharapkannya kembali. Barang itu sudah jauh darimu.",
+      "Tidak lama lagi akan kembali kepadamu.",
+      "Tidak akan kembali selamanya. Jangan lagi mencarinya.",
+      "Akan kembali kepadamu di waktu dekat.",
+      "Akan kembali kepadamu.",
+      "Urusannya akan lama. Tidak bisa kamu terburu-buru mendapatkannya kembali.",
+      "Bahagialah. Ia akan kembali kepadamu di waktu dekat.",
+      "Tidak akan kembali kepadamu selamanya. Mohonlah keselamatan kepada Allah."
+    ]
+  },
+  {
+    "title": "Kelapangan Setelah Kesempitan",
+    "subtitle": "Kapan berakhir kesempitan.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Allah akan menghilangkan kegundahanmu.",
+      "Allah akan melapangkanmu.",
+      "Allah akan melapangkanmu setelah dua hari.",
+      "Masih dalam keadaan sangat sulit. Mohonlah kepada Allah untuk kemudahannya.",
+      "Allah menghilangkan kegundahanmu di waktu dekat.",
+      "Mohonlah kepada Allah. Sungguh Dia menjawab doa orang yang memohon kepadaNYA.",
+      "Allah akan melapangkanmu di waktu dekat.",
+      "Merendah dirilah kepada Allah. Menghadaplah kepadaNYA, maka akan datang kepadamu kelapangan.",
+      "Allah akan melapangkanmu di waktu dekat.",
+      "Allah akan melapangkanmu di waktu dekat.",
+      "Allah akan menghilangkan kegundahan dan kesedihanmu.",
+      "Allah akan menghilangkan kegundahanmu.",
+      "Mohonlah kepada Allah kesejahteraan dan kemudahan. Sungguh keadaanmu sangat sulit."
+    ]
+  },
+  {
+    "title": "Kekasih",
+    "subtitle": "Bagaimana perasaan kekasih.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Hatinya tidak mencintaimu. Hanya tampak zhohirnya saja ia mencintaimu.",
+      "Ia mencintaimu seperti kamu mencintainya, tidak lebih tidak kurang.",
+      "Ia sibuk dengan orang selainmu. Berpalinglah darinya.",
+      "Ia sangat kuat menginginkanmu. Maka se itu, wajib atasmu untuk meninggalkan berbahai kebaikan untuknya.",
+      "Ia sibuk bersama orang lain, lepaskan dia dan carilah orang lain selainnya.",
+      "Hatinya lapang untukmu. Mantablah dengannya, maka kamu akan mendapatkan rezeki.",
+      "Hatinya tidak bersamamu. Hanya secara zhohirnya saja ia bersamamu. Tinggalkan dia.",
+      "Kalian saling menginginkan satu dengan lainnya.",
+      "Cintanya kepadamu sama seperti cintamu kepadanya. Kembalilah lihat dirimu.",
+      "Jaga jarak dengannya. Kamu akan menjumpai orang lain. Ia tidak mencintaimu.",
+      "Ia mencintaimu. Maka kamupun harus mencintainya pula. Dengan demikian kamu akan mendapatkan petunjuk kebaikan.",
+      "Mantablah bersamanya. Ia memporak-pondahkanmu dengan rasa simpatinya kepadamu.",
+      "Ia mencintaimu seperti kamu mencintainya, tidak lebih tidak juga kurang."
+    ]
+  },
+  {
+    "title": "Persahabatan",
+    "subtitle": "Baik atau tidak persahabatan dengannya.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Bersegeralah. Kamu akan mendapatkan kebaikan didalamnya.",
+      "Bersahabatlah. Terdapat kebaikan didalamnya untukmu.",
+      "Jangan dekati dia. Terdapat keburukan untukmu.",
+      "Jangan dekati dia. Kamu akan menyesal.",
+      "Bersahabatlah dengannya. Allah akan memberikan kebaikan untukmu.",
+      "Bersahabatlah. Ia akan dapat membantumu.",
+      "Tidak ada faedah persahabatan dengannya. Jaga jarak dengannya, maka kamu akan mendapatkan petunjuk kepada kebaikan.",
+      "Bersahabat dengannya, karena itu akan memberimu petunjuk kepada berbagai kebaikan.",
+      "Bersahabatlah. Kamu akan mmendapatkan kebahagian dengannya.",
+      "Bersegeralah. Sama saja apakah ia seorrang penguasa atau lainnya.",
+      "Terdapat keburukan yang nyata didalamnya. Tinggalkanlah.",
+      "Bersahabat atau tidak dengannya sama saja. Lakukanlah apa yang kamu hendaki.",
+      "Bersahabatlah jika ia termasuk pejabat negara atau orrang terpandang."
+    ]
+  },
+  {
+    "title": "Penyerahan Amanah",
+    "subtitle": "Baik atau tidak menyerahkan amanat kepadanya.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Tahanlah hajatmu dahulu. Jangan kamu titipkan. Sesungguhnya hal itu bisa merrusak amanah tersebut.",
+      "Titipkanlah. Amanah itu akan terjaga dan mendapatkan rezeki.",
+      "Amanahnya akan terjaga. Baik itu diperjalanan atau berada di suatu tempat.",
+      "Jangan kamu titipkan amanah itu kepadanya. Tidak ada kebaikan untukmu didalamnya.",
+      "Tawakallah kepada Allah. Titipkanlah. Kamu akan mendapatkan kebaikan.",
+      "Tidak ada kebaikan untukmu didalamnya. Tahan dahulu hajatmu.",
+      "Titipkanlah dan bertawakallah kepada Allah. Kamu akan mendapatkan kebaikan.",
+      "Tidak akan aman menyerahkan amanat. Terlihat didalamnya kerusakan dan sia-sia.",
+      "Amanah itu akan terjaga.",
+      "Tahanlah dahulu, jangan dititipkan, nanti kamu akan menyesal dan menjadi rusak amanahnya.",
+      "Jangan dititipkan. Tidak terlihat baik untukmu selain penyesalan.",
+      "Kamu akan untung menitipkannya. Lakukanlah, kamu akan mendapatkan rezeki.",
+      "Menitipkan ataupun tidak, sama saja keadaannya."
+    ]
+  },
+  {
+    "title": "Kerja Sama",
+    "subtitle": "Baik atau bekerja sama dengannya.",
+    "group": "Yamin",
+    "answers": [
+      "Tentukan ulang pilihan dengan focus rasa.",
+      "Jangan lakukan. Tidak ada kebaikan untukmu selamanya didalamnya.",
+      "Bersegeralah. Kamu akan mendapatkan keuntungan.",
+      "Baik dan dapat membawa rezeki unntukmu.",
+      "Kerjasamalah. Kamu akan mendapatkan kebaikan didalamnya.",
+      "Kerjasamalah. Kamu akan mendapatkan kebaikan didalamnya.",
+      "Dapat membuatmu menjadi miskin, waspadalah.",
+      "Buruk untukmu. Jangan lakukan.",
+      "Segeralah bekerjasama dengannya, maka kamu akan mendapatkan keuntungan.",
+      "Tidak ada kebaikan untukmu didalam kerjasama ini. Tinggalkanlah dan cari yang lain.",
+      "Terdapat kerusakan. Waspadalah dan jangan lakukan.",
+      "Kerjasamalah. Terdapat keuntungan yang banyak didalamnya.",
+      "Terdapat keburukan yang nyata. Tinggalkanlah.",
+      "Menitipkan ataupun tidak, sama saja keadaannya."
+    ]
+  }
+];
+const menuScreen=document.getElementById('menuScreen'),detailScreen=document.getElementById('detailScreen'),menuList=document.getElementById('menuList'),pageTitle=document.getElementById('pageTitle'),pageSubtitle=document.getElementById('pageSubtitle'),selectedNumber=document.getElementById('selectedNumber'),resultNumber=document.getElementById('resultNumber'),answerText=document.getElementById('answerText'),randomCard=document.getElementById('randomCard'),statusText=document.getElementById('statusText'),numberGrid=document.getElementById('numberGrid'),startBtn=document.getElementById('startBtn'),stopBtn=document.getElementById('stopBtn'),repeatBtn=document.getElementById('repeatBtn'),menuBtn=document.getElementById('menuBtn'),backTopBtn=document.getElementById('backTopBtn'),topMenuBtn=document.getElementById('topMenuBtn');
+let activeItem=DATA[0],intervalId=null,currentNumber='01';
+function formatNumber(num){return String(num).padStart(2,'0')}
+function randomNumber(){return formatNumber(Math.floor(Math.random()*14)+1)}
+function surroundingNumbers(center){const n=Number(center);return[formatNumber(n===1?14:n-1),formatNumber(n),formatNumber(n===14?1:n+1)]}
+function shuffleNumbers(){const nums=Array.from({length:14},(_,i)=>formatNumber(i+1));for(let i=nums.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[nums[i],nums[j]]=[nums[j],nums[i]]}return nums}
+function renderNumberGrid(center){const shuffled=shuffleNumbers(),centerCol=surroundingNumbers(center),columns=[];for(let i=0;i<5;i++)columns.push(i===2?centerCol:shuffled.splice(0,3));numberGrid.innerHTML=columns.map(col=>`<div class="num-col">${col.map(n=>`<span>${n}</span>`).join('')}</div>`).join('')}
+function renderMenu(){menuList.innerHTML=DATA.map((item,index)=>`<button class="menu-item" type="button" data-index="${index}"><span class="menu-no">${formatNumber(index+1)}</span><span class="menu-title">${item.title}</span><span class="menu-arrow">›</span></button>`).join('')}
+function resetRandomState(){clearInterval(intervalId);intervalId=null;randomCard.classList.remove('is-spinning');currentNumber=randomNumber();selectedNumber.textContent=currentNumber;resultNumber.textContent='--';answerText.textContent='';statusText.textContent='Nomor siap diacak';renderNumberGrid(currentNumber)}
+function openCategory(index){activeItem=DATA[index]||DATA[0];pageTitle.textContent=activeItem.title;pageSubtitle.textContent=activeItem.subtitle;menuScreen.classList.remove('active');detailScreen.classList.add('active');resetRandomState()}
+function backToMenu(){clearInterval(intervalId);intervalId=null;randomCard.classList.remove('is-spinning');detailScreen.classList.remove('active');menuScreen.classList.add('active')}
+function updateDisplay(number,showAnswer=false){currentNumber=number;selectedNumber.textContent=number;renderNumberGrid(number);if(showAnswer){resultNumber.textContent=number;answerText.textContent=activeItem.answers[Number(number)-1]||''}}
+function startRandom(){if(intervalId)return;randomCard.classList.add('is-spinning');statusText.textContent='Nomor sedang diacak...';answerText.textContent='';resultNumber.textContent='--';intervalId=setInterval(()=>updateDisplay(randomNumber(),false),90)}
+function stopRandom(){if(!intervalId){updateDisplay(currentNumber,true);statusText.textContent='Nomor sudah dipilih';return}clearInterval(intervalId);intervalId=null;randomCard.classList.remove('is-spinning');statusText.textContent='Nomor berhenti dan hasil muncul';updateDisplay(currentNumber,true)}
+menuList.addEventListener('click',e=>{const item=e.target.closest('.menu-item');if(!item)return;openCategory(Number(item.dataset.index))});startBtn.addEventListener('click',startRandom);stopBtn.addEventListener('click',stopRandom);repeatBtn.addEventListener('click',resetRandomState);menuBtn.addEventListener('click',backToMenu);backTopBtn.addEventListener('click',backToMenu);topMenuBtn.addEventListener('click',backToMenu);renderMenu();
+</script>
+</body>
+</html>
